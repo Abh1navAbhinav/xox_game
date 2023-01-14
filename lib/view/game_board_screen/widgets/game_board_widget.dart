@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:xox/controller/animation_controller.dart';
 import 'package:xox/controller/game_board_controller.dart';
 import 'package:xox/view/game_board_screen/widgets/single_game_board_piece_widget.dart';
 
-class GameBoardWidget extends StatelessWidget {
-  GameBoardWidget({
+class GameBoardWidget extends GetView<GameBoardController> {
+  const GameBoardWidget({
     Key? key,
   }) : super(key: key);
-  final GameBoardController oAnimationController = Get.find();
-  final OnlyForAnimationController xAnimationController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +25,7 @@ class GameBoardWidget extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return InkWell(
             onTap: () {
-              oAnimationController.boardOnTap(index);
-              xAnimationController.animationcontrollerOntapFunction();
+              controller.boardOnTap(index);
             },
             child: SingleGameBoardPieceWidget(index: index),
           );

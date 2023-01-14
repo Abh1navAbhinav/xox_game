@@ -7,11 +7,9 @@ import 'package:xox/controller/game_board_controller.dart';
 class PlayerAvatar extends GetView<GameBoardController> {
   const PlayerAvatar({
     Key? key,
-    required this.animationController,
     required this.player,
   }) : super(key: key);
   final String player;
-  final Animation<double> animationController;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -21,7 +19,7 @@ class PlayerAvatar extends GetView<GameBoardController> {
         children: [
           RotationTransition(
             turns: Tween(begin: 0.0, end: 1.0).animate(
-              animationController,
+              controller.oAnimationController,
             ),
             child: Align(
               alignment: Alignment.center,

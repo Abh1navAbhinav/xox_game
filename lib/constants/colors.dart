@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-bool xAnimation = true;
-
 class ConstantColors {
   static Gradient familiarGradient = const LinearGradient(
     colors: [

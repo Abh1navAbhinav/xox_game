@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:xox/constants/colors.dart';
 
 class GameBoardController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -36,13 +35,7 @@ class GameBoardController extends GetxController
     if (element[index] == '') {
       prevElement == 'X' ? element[index] = 'O' : element[index] = 'X';
       prevElement = element[index];
-      xAnimation = !xAnimation;
-      if (xAnimation) {
-        oAnimationController.stop();
-      } else {
-        oAnimationController.forward();
-        oAnimationController.repeat();
-      }
+
       count++;
     }
 //calling functions
@@ -85,8 +78,6 @@ class GameBoardController extends GetxController
     element.replaceRange(0, element.length, List.filled(9, ''));
     prevElement = 'O';
     count = 0;
-    oAnimationController.stop();
-    xAnimation = true;
   }
 
 //-----------------------------------Checking if anyone win the match every time user tap the board function
@@ -138,5 +129,7 @@ class GameBoardController extends GetxController
       vsync: this,
       duration: const Duration(milliseconds: 5000),
     );
+    oAnimationController.forward();
+    oAnimationController.repeat();
   }
 }
