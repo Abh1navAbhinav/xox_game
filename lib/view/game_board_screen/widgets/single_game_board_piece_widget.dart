@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:xox/controller/game_board_controller.dart';
 
 class SingleGameBoardPieceWidget extends GetView<GameBoardController> {
@@ -24,7 +25,7 @@ class SingleGameBoardPieceWidget extends GetView<GameBoardController> {
           child: Obx(
             () => Text(
               controller.element[index],
-              style: const TextStyle(
+              style: GoogleFonts.indieFlower(
                 fontSize: 70,
                 fontWeight: FontWeight.w300,
               ),
