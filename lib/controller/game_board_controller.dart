@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,7 +10,7 @@ class GameBoardController extends GetxController
   RxList<String> element = List.filled(9, '').obs;
   RxList<Color> boxColors = List.filled(9, Colors.white).obs;
 
-  String prevElement = 'O';
+  RxString prevElement = 'O'.obs;
   int count = 0;
 
   late AnimationController oAnimationController;
@@ -33,24 +35,26 @@ class GameBoardController extends GetxController
 
   void boardOnTap(int index) {
     if (element[index] == '') {
-      prevElement == 'X' ? element[index] = 'O' : element[index] = 'X';
-      prevElement = element[index];
+      prevElement.value == 'X' ? element[index] = 'O' : element[index] = 'X';
+      prevElement.value = element[index];
 
       count++;
     }
 //calling functions
     var result = checkWin(element[index]);
-    changeColor(result);
+    changeColor(result, element[index]);
   }
 
 //-----------------------------------Change color of the board when wins or match draw function
 
-  void changeColor(List<int>? result) {
+  Future<void> changeColor(List<int>? result, String v) async {
     if (result != null) {
       if (result[2] != 0) {
-        boxColors[result[0]] = Colors.green;
-        boxColors[result[1]] = Colors.green;
-        boxColors[result[2]] = Colors.green;
+        boxColors[result[0]] = Colors.green.withOpacity(0.3);
+        boxColors[result[1]] = Colors.green.withOpacity(0.3);
+        boxColors[result[2]] = Colors.green.withOpacity(0.3);
+        await Future.delayed(const Duration(milliseconds: 200));
+        alertBoxMethod(v: v);
       } else {
         boxColors.replaceRange(
           0,
@@ -60,8 +64,48 @@ class GameBoardController extends GetxController
             Colors.red.withOpacity(0.3),
           ),
         );
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        alertBoxMethod(v: v, win: false);
       }
     }
+  }
+
+//-----------------------------------alert box  function
+
+  Future<dynamic> alertBoxMethod({required String v, bool? win = true}) {
+    return Get.defaultDialog(
+      title: win == false ? 'Game Over' : 'Congratulations',
+      middleText: win == false
+          ? 'Match become tie'
+          : (v == 'X' ? "player 'X' wins" : "player 'O' wins"),
+      barrierDismissible: false,
+      onWillPop: () => willPopCallback(),
+      confirmTextColor: Colors.white,
+      confirm: InkWell(
+        onTap: () {
+          resetButtonFunction();
+          Get.back();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.black)),
+          child: const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text('Replay'),
+          ),
+        ),
+      ),
+    );
+  }
+
+//-----------------------------------on will pop call back function function
+
+  Future<bool> willPopCallback() async {
+    resetButtonFunction();
+    log('message');
+    return true; //
   }
 
 //-----------------------------------Reset Button OnTap function
@@ -76,7 +120,7 @@ class GameBoardController extends GetxController
       ),
     );
     element.replaceRange(0, element.length, List.filled(9, ''));
-    prevElement = 'O';
+    prevElement.value = 'O';
     count = 0;
   }
 
@@ -84,39 +128,22 @@ class GameBoardController extends GetxController
 
   List<int>? checkWin(String v) {
     if (element[0] == v && element[1] == v && element[2] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
       return [0, 1, 2];
     } else if (element[0] == v && element[3] == v && element[6] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [0, 3, 6];
     } else if (element[0] == v && element[4] == v && element[8] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [0, 4, 8];
     } else if (element[1] == v && element[4] == v && element[7] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [1, 4, 7];
     } else if (element[2] == v && element[5] == v && element[8] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [2, 5, 8];
     } else if (element[2] == v && element[4] == v && element[6] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [2, 4, 6];
     } else if (element[6] == v && element[7] == v && element[8] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [6, 7, 8];
     } else if (element[3] == v && element[4] == v && element[5] == v) {
-      Get.snackbar('Won', v == 'X' ? 'player one wins' : 'player two wins');
-
       return [3, 4, 5];
     } else if (count == 9) {
-      Get.snackbar('Game over', 'Match draw');
-
       return [0, 0, 0];
     }
     return null;
